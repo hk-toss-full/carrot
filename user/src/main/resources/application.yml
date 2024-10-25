@@ -1,6 +1,8 @@
 spring:
   application:
     name: user
+  profiles:
+    active: jwt
   datasource:
     url: jdbc:mysql://localhost:3306/carrotTestDB?serverTimezone=Asia/Seoul
     username: test
@@ -10,7 +12,7 @@ spring:
     database: mysql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   kafka:
@@ -21,9 +23,26 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
 
-eureka:
-  client:
-    service-url:
-      defaultUrl: http://localhost:8761/eureka
-  instance:
-    prefer-ip-address: true
+#eureka:
+#  client:
+#    service-url:
+#      defaultUrl: http://localhost:8761/eureka
+#  instance:
+#    prefer-ip-address: true
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    password: ${JASYPT_PASSWORD}
+
+oauth:
+  kakao:
+    client-id: ENC(yDgzTpo5IOkdiaPBx1PccrAnmRKidtBHKCrmdPnHHwjxYbUPSClZZBZIdpki3Ons)
+    client-secret: ENC(OAM5hf4YjIehthcCYGuk8ducfs1VcZ3iTFyvtxE7Jh2QWBMqxmxKGRmUPMheZUhs)
+    redirect-uri: ENC(0Wc2f5WexX3QFFpl0Cs9W3M98PnSRBwKWWV74N1pePTe31acECzyP6iMNE723LsWMBOMBwNF1wM=)
+
+jwt:
+  secret: ENC(FMIKOfmJpv14rbNd1UT1OBwM8Sv9eQAxSmKr7cTpmvrDBfSbB29jaRsMuHddZhxgRKt+22S+T40=)
+  access-token-expiration: ENC(Cpnmjkj/t/BvyAvj+yq7XQ==)
+  refresh-token-expiration: ENC(9tzKWL4OCG0TAuTQk4RjstqKNClb+k41)
+
