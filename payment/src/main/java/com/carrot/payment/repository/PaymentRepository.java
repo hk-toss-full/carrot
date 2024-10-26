@@ -6,6 +6,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    List<Payment> findAllByUserId(Long userId);
-    List<Payment> findAllByStatus(PaymentStatus status);
+    List<Payment> findByUserId(Long userId);
+    List<Payment> findByStatus(PaymentStatus status);
 }
