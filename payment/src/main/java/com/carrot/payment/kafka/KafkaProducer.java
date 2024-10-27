@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 public class KafkaProducer implements KafkaService {
 
     private final KafkaTemplate<String, KafkaMessage> kafkaTemplate;
-    private static final String topic = "payment_topic";  // Topic 설정
+    private static final String TOPIC = "payment_topic";
 
     @Override
     public void sendPaymentEvent(KafkaMessage message) {
-        kafkaTemplate.send(topic, message);
-        System.out.println(message);
+        kafkaTemplate.send(TOPIC, message);
+        System.out.println("Sent Kafka message: " + message);
     }
 }

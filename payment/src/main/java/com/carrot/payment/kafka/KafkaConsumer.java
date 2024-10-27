@@ -1,5 +1,8 @@
 package com.carrot.payment.kafka;
 
+import com.carrot.payment.domain.Payment;
+import com.carrot.payment.domain.PaymentStatus;
+import com.carrot.payment.dto.PaymentRequest;
 import com.carrot.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,12 +16,23 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "payment_topic", groupId = "payment-consumer-group")
     public void processPaymentMessage(KafkaMessage message) {
-        // 메시지 출력 (필요시 로그 추가 가능)
         System.out.println("Received Kafka message: " + message);
 
-        // 메시지의 action에 따라 적절한 PaymentService 메서드 호출
-        switch (message.getAction()) {
+        Payment payment = message.getPayment();
 
+        switch (message.getAction()) {
+            case "CREATED":
+                // 새로운 결제 생성 로직
+                service.savePaymentDetail(new PaymentRequest());
+                break;
+            case "APPROVED":
+                // 결제 승인 로직
+                service.updatePaymentStatus(payment.getId(), PaymentStatus.APPROVED);
+                break;
+            case "CANCELED":
+                // 결제 취소 로직
+                service.updatePaymentStatus(payment.getId(), PaymentStatus.CANCELED);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown action: " + message.getAction());
         }

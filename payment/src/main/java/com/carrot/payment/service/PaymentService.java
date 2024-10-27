@@ -11,4 +11,6 @@ public interface PaymentService {
     List<PaymentResponse> getUserPaymentsHistory(Long userId);
     List<PaymentResponse> getPaymentsByStatus(PaymentStatus status);
     PaymentResponse savePaymentDetail(PaymentRequest paymentRequest);
+
+    void updatePaymentStatus(Long paymentId, PaymentStatus status);
 }

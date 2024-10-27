@@ -4,6 +4,7 @@ import com.carrot.payment.domain.Payment;
 import com.carrot.payment.domain.PaymentStatus;
 import com.carrot.payment.dto.PaymentRequest;
 import com.carrot.payment.dto.PaymentResponse;
+import com.carrot.payment.kafka.KafkaMessage;
 import com.carrot.payment.kafka.KafkaService;
 import com.carrot.payment.repository.PaymentRepository;
 import java.time.LocalDateTime;
@@ -57,8 +58,15 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = convertToEntity(paymentRequest);
         Payment savedPayment = paymentRepository.save(payment);
 
-        KafkaService.sendPatmentEvent(savedPayment);
+        KafkaMessage message = new KafkaMessage(LocalDateTime.now(), savedPayment, "CREATED");
+        kafkaService.sendPaymentEvent(message);
+
         return convertToResponseDto(savedPayment);
+    }
+
+    @Override
+    public void updatePaymentStatus(Long paymentId, PaymentStatus status) {
+        paymentRepository.updatePaymentStatus(paymentId, status);
     }
 
     private Payment convertToEntity(PaymentRequest request) {
