@@ -22,15 +22,17 @@ public class KafkaConsumer {
 
         switch (message.getAction()) {
             case "CREATED":
-                // 새로운 결제 생성 로직
-                service.savePaymentDetail(new PaymentRequest());
+                PaymentRequest request = PaymentRequest.builder()
+                        .userId(payment.getUserId())
+                        .price(payment.getPrice())
+                        .status(payment.getStatus())
+                        .build();
+                service.savePaymentDetail(request);
                 break;
             case "APPROVED":
-                // 결제 승인 로직
                 service.updatePaymentStatus(payment.getId(), PaymentStatus.APPROVED);
                 break;
             case "CANCELED":
-                // 결제 취소 로직
                 service.updatePaymentStatus(payment.getId(), PaymentStatus.CANCELED);
                 break;
             default:
