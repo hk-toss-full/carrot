@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PaymentTossApiController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final String WIDGET_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-    private static final String API_SECRET_KEY = "test_sk_mBZ1gQ4YVXjawyl0aAq68l2KPoqN";
+    @Value("${api.key}")
+    private String API_SECRET_KEY;
+
+    @Value("${api.widget-key}")
+    private String WIDGET_SECRET_KEY;
 
     @RequestMapping(value = {"/confirm/widget", "/confirm/payment"})
     public ResponseEntity<JSONObject> confirmPayment(HttpServletRequest request, @RequestBody String jsonBody) throws Exception {
