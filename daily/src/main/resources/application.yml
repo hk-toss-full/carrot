@@ -3,16 +3,30 @@ spring:
     name: daily
   datasource:
     url: jdbc:mysql://localhost:3306/carrotTestDB?serverTimezone=Asia/Seoul
-    username: test
-    password: 1234
+    username: root
+    password: root123!
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+##DB Test##
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#  h2:
+#    console:
+#      enabled: true
   jpa:
     database: mysql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#    database-platform: org.hibernate.dialect.H2Dialect
+
+
+
+
   kafka:
     consumer:
       group-id: daily
@@ -20,9 +34,12 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
+
 eureka:
   client:
     service-url:
-      defaultUrl: http://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
   instance:
     prefer-ip-address: true # ???
