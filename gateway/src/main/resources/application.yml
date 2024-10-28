@@ -6,9 +6,13 @@ spring:
     name: gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       globalcors:
         cors-configurations:
           '[/**]':
+            allowedHeaders: "*"
             allowed-methods:
               - GET
               - POST
@@ -17,6 +21,7 @@ spring:
               - OPTIONS
             allowed-origins:
               - http://localhost:5173
+              - http://localhost:8080
       routes:
         - id: location
           uri: lb://LOCATION
@@ -50,3 +55,9 @@ spring:
           filters:
               - RemoveRequestHeader=Sec-WebSocket-Protocol
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # 유레카 서버 주소
+    register-with-eureka: true
+    fetch-registry: true
