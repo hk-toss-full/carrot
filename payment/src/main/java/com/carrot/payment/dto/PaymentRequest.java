@@ -14,14 +14,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PaymentRequest {
     private Long userId;
-    private Double price;
+    private Double amount;
     private PaymentStatus status;
+    private String transactionId;
 
     public Payment toEntity() {
         return Payment.builder()
-                .userId(this.userId)
-                .price(this.price)
+                .chatRoomId(1L)
+                .userId(1L)
+                .amount(this.amount)
                 .status(this.status)
+                .transactionId(transactionId)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

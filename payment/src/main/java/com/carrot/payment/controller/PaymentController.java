@@ -49,6 +49,7 @@ public class PaymentController {
     // 결제 저장
     @PostMapping()
     public ResponseEntity<CommonApiResponse<PaymentResponse>> savePaymentDetail(@RequestBody PaymentRequest paymentRequest) {
+        System.out.println("Received payment request: " + paymentRequest);
         PaymentResponse savedPayment = service.savePaymentDetail(paymentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonApiResponse.successResponse(HttpStatus.CREATED, savedPayment));
     }

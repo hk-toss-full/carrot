@@ -24,7 +24,7 @@ public class KafkaConsumer {
             case "CREATED":
                 PaymentRequest request = PaymentRequest.builder()
                         .userId(payment.getUserId())
-                        .price(payment.getPrice())
+                        .amount(payment.getAmount())
                         .status(payment.getStatus())
                         .build();
                 service.savePaymentDetail(request);

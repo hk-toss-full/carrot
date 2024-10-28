@@ -11,7 +11,7 @@ import lombok.Data;
 public class PaymentResponse {
     private Long id;
     private Long userId;
-    private Double price;
+    private Double amount;
     private PaymentStatus status;
     private String transactionId;
     private LocalDateTime createdAt;
@@ -21,7 +21,7 @@ public class PaymentResponse {
         return PaymentResponse.builder()
                 .id(payment.getId())
                 .userId(payment.getUserId())
-                .price(payment.getPrice())
+                .amount(payment.getAmount())
                 .status(payment.getStatus())
                 .transactionId(payment.getTransactionId())
                 .createdAt(payment.getCreatedAt())

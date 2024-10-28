@@ -66,7 +66,7 @@ class PaymentServiceImplTest {
         // mockRequest 초기화
         mockRequest = PaymentRequest.builder()
                 .userId(mockPayment.getUserId())
-                .price(mockPayment.getPrice())
+                .amount(mockPayment.getPrice())
                 .status(mockPayment.getStatus())
                 .build();
     }

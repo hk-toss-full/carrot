@@ -58,8 +58,9 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRequest.toEntity();
         Payment savedPayment = paymentRepository.save(payment);
 
-        KafkaMessage message = new KafkaMessage(LocalDateTime.now(), savedPayment, "CREATED");
-        kafkaService.sendPaymentEvent(message);
+        System.out.println("저장된 결제 정보: " + savedPayment);
+//        KafkaMessage message = new KafkaMessage(LocalDateTime.now(), savedPayment, "CREATED");
+//        kafkaService.sendPaymentEvent(message);
 
         return PaymentResponse.fromEntity(savedPayment);
     }
