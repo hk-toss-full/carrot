@@ -1,6 +1,6 @@
 package com.carrot.user.controller;
 
-import com.carrot.user.domain.dto.UpdateNicknameRequest;
+import com.carrot.user.domain.dto.UserRequest;
 import com.carrot.user.domain.dto.UserResponse;
 import com.carrot.user.global.ApplicationResponse;
 import com.carrot.user.jwt.JwtAuthenticationProvider;
@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<ApplicationResponse<UserResponse>> updateUserNickname(@RequestBody UpdateNicknameRequest request) {
+    public ResponseEntity<ApplicationResponse<UserResponse>> updateUserNickname(@RequestBody UserRequest request) {
         long userId = jwtAuthenticationProvider.getUserId();
         UserResponse updateUserInfo = userService.updateUserNickname(userId, request);
         return ResponseEntity.ok(ApplicationResponse.success(updateUserInfo));

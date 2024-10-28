@@ -10,8 +10,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,6 +26,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationProvider {
 
     @Value("${jwt.secret}")
@@ -76,16 +82,13 @@ public class JwtAuthenticationProvider {
 
     public Long getUserId() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String accessToken = request.getHeader("Authorization").split(" ")[1].trim();
-        return getId(accessToken);
-    }
+        String accessToken = resolveAccessToken(request);
 
-    public Long getId(String accessToken) {
-        return Long.valueOf(Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(accessToken)
-                .getBody()
-                .get("userId", Integer.class).toString());
+        if (accessToken == null || !validateToken(accessToken))
+            throw new ApplicationException(UserErrorCode.ACCESS_TOKEN_NULL);
+
+        Claims claims = getClaims(accessToken);
+        return claims.get("userId", Long.class);
     }
 
     public boolean validateToken(String token) {

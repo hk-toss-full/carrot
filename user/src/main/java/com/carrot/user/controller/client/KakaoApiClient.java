@@ -11,8 +11,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Map;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -47,13 +45,22 @@ public class KakaoApiClient {
 
     public KakaoInfoResponse requestKakaoUserInfo(String accessToken) {
         String requestUri = "https://kapi.kakao.com/v2/user/me";
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
         return restTemplate.exchange(requestUri, HttpMethod.GET, request, KakaoInfoResponse.class).getBody();
+    }
+
+    public void logout(String accessToken) {
+        String requestUri = "https://kapi.kakao.com/v1/user/logout";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        restTemplate.exchange(requestUri, HttpMethod.POST, request, Void.class);
     }
 
 }
