@@ -1,3 +1,6 @@
+server:
+  port: 8083
+
 spring:
   application:
     name: item
@@ -13,10 +16,10 @@ spring:
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/carrotTestDB
-      database: carrotTestDB
+#  data:
+#    mongodb:
+#      uri: mongodb://localhost:27017/carrotTestDB
+#      database: carrotTestDB
   kafka:
     consumer:
       group-id: item
@@ -24,9 +27,10 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
-eureka:
-  client:
-    service-url:
-      defaultUrl: http://localhost:8761/eureka
-  instance:
-    prefer-ip-address: true # ???
+#eureka:
+#  client:
+#    service-url:
+#      defaultUrl: http://localhost:8761/eureka
+#  instance:
+#    prefer-ip-address: true # ???
+
