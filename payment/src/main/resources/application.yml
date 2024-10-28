@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: local
   application:
     name: payment
   datasource:
@@ -27,9 +29,7 @@ eureka:
   instance:
     prefer-ip-address: true
 
-api:
-  key: ${API_SECRET_KEY:test_sk_mBZ1gQ4YVXjawyl0aAq68l2KPoqN} # 환경변수 사용, 기본값 설정
-  widget-key: ${WIDGET_SECRET_KEY:test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6} # 환경변수 사용, 기본값 설정
+
 
 server:
   port: 4000

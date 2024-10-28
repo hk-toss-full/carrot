@@ -1,0 +1,8 @@
+
+api:
+  key: test_sk_mBZ1gQ4YVXjawyl0aAq68l2KPoqN
+  widget-key: test_sk_mBZ1gQ4YVXjawyl0aAq68l2KPoqN
+
+logging:
+  level:
+    org.apache.kafka: OFF
