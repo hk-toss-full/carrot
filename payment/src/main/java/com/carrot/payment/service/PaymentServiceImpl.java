@@ -7,6 +7,7 @@ import com.carrot.payment.dto.PaymentResponse;
 import com.carrot.payment.kafka.KafkaMessage;
 import com.carrot.payment.kafka.KafkaService;
 import com.carrot.payment.repository.PaymentRepository;
+import com.carrot.payment.util.PaymentMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentResponse> getAllPayments() {
         return paymentRepository.findAll().stream()
-                .map(this::convertToResponseDto)
+                .map(PaymentMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -33,14 +34,14 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse getPaymentById(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("결제를 찾을 수 없습니다."));
-        return convertToResponseDto(payment);
+        return PaymentMapper.toResponseDto(payment);
     }
 
     @Description("사용자별 결제 내역 조회")
     @Override
     public List<PaymentResponse> getUserPaymentsHistory(Long userId) {
         return paymentRepository.findByUserId(userId).stream()
-                .map(this::convertToResponseDto)
+                .map(PaymentMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -48,46 +49,24 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentResponse> getPaymentsByStatus(PaymentStatus status) {
         return paymentRepository.findByStatus(status).stream()
-                .map(this::convertToResponseDto)
+                .map(PaymentMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Description("결제 상세 내역 저장")
     @Override
     public PaymentResponse savePaymentDetail(PaymentRequest paymentRequest) {
-        Payment payment = convertToEntity(paymentRequest);
+        Payment payment = PaymentMapper.toEntity(paymentRequest);
         Payment savedPayment = paymentRepository.save(payment);
 
         KafkaMessage message = new KafkaMessage(LocalDateTime.now(), savedPayment, "CREATED");
         kafkaService.sendPaymentEvent(message);
 
-        return convertToResponseDto(savedPayment);
+        return PaymentMapper.toResponseDto(savedPayment);
     }
 
     @Override
     public void updatePaymentStatus(Long paymentId, PaymentStatus status) {
         paymentRepository.updatePaymentStatus(paymentId, status);
-    }
-
-    private Payment convertToEntity(PaymentRequest request) {
-        return Payment.builder()
-                .userId(request.getUserId())
-                .price(request.getPrice())
-                .status(request.getStatus())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-    }
-
-    private PaymentResponse convertToResponseDto(Payment payment) {
-        return PaymentResponse.builder()
-                .id(payment.getId())
-                .userId(payment.getUserId())
-                .price(payment.getPrice())
-                .status(payment.getStatus())
-                .transactionId(payment.getTransactionId())
-                .createdAt(LocalDateTime.parse(payment.getCreatedAt().toString()))
-                .updatedAt(LocalDateTime.parse(payment.getUpdatedAt().toString()))
-                .build();
     }
 }
