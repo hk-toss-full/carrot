@@ -1,13 +1,10 @@
 package com.carrot.daily.controller;
 
 import com.carrot.daily.domain.Daily;
-import com.carrot.daily.repository.DailyRepository;
 import com.carrot.daily.request.DailyPostRequest;
 import com.carrot.daily.response.DailyResponse;
 import com.carrot.daily.service.DailyService;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.protocol.types.Field;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DailyController {
     private final DailyService dailyService;
-    private final DailyRepository dailyRepository;
-
-    @Autowired
-    public DailyController(DailyRepository dailyRepository, DailyService dailyService) {
-        this.dailyRepository = dailyRepository;
-        this.dailyService = dailyService;
-    }
 
     @GetMapping("/posts")
     public ResponseEntity<List<DailyResponse>> getAllPosts() {
@@ -38,20 +28,19 @@ public class DailyController {
         return dailyService.getPostById(id);
     }
 
-
-    @PostMapping("/write")
+    @PostMapping("/write-post")
     public ResponseEntity<String> writePost(@RequestBody DailyPostRequest dailyPostRequest) {
         dailyService.dailyPost(dailyPostRequest);
         return ResponseEntity.ok("게시글이 등록되었습니다.");
     }
 
-    @PutMapping("/post-update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateDailyPost(@PathVariable Long id, @RequestBody DailyPostRequest dailyPostRequest) {
         dailyService.updateDailyPost(id, dailyPostRequest);
         return ResponseEntity.ok("게시글이 수정되었습니다.");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDailyPost(@PathVariable Long id){
         dailyService.deleteDailyPost(id);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");

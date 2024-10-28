@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 
 public record CommentResponse (
         Long userId,
-        Long locationId,
+        Long commentId,
         String content,
-        Date createAt
+        Date createdAt
 ) {
     public static CommentResponse from(Comment comment) {
         return new CommentResponse(
                 comment.getUserId(),
-                comment.getDaylifeId(),
+                comment.getDaily().getId(),
                 comment.getContent(),
                 comment.getCreatedAt()
         );

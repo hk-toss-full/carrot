@@ -8,8 +8,8 @@ import java.util.List;
 
 @Service
 public interface CommentService {
-    void addComment(CommentRequest commentRequest);
-    List<CommentResponse> getAllComments();
-    void deleteComment(Long id);
+    void addComment(CommentRequest commentRequest, Long daylifeId);
+    List<CommentResponse> getAllComments(Long daylifeId);
+    void deleteComment(Long daylifeId, Long commentId);
 }
 

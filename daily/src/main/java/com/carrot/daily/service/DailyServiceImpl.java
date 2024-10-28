@@ -1,10 +1,8 @@
 package com.carrot.daily.service;
 
-import com.carrot.daily.component.DeleteDailyPost;
 import com.carrot.daily.domain.Daily;
 import com.carrot.daily.repository.DailyRepository;
 import com.carrot.daily.request.DailyPostRequest;
-import com.carrot.daily.component.UpdateDailyPost;
 import com.carrot.daily.response.DailyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +15,6 @@ import java.util.Optional;
 public class DailyServiceImpl implements DailyService {
 
     private final DailyRepository dailyRepository;
-    private final UpdateDailyPost updateDailyPost;
-    private final DeleteDailyPost deleteDailyPost;
 
     public void dailyPost(DailyPostRequest dailyPostRequest) {
         Daily post = dailyPostRequest.toEntity();
@@ -37,12 +33,27 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public void updateDailyPost(Long id, DailyPostRequest dailyPostRequest) {
-        updateDailyPost.updateDailyPost(id, dailyPostRequest);
+        Optional<Daily> getPost = dailyRepository.findById(id);
+        if(getPost.isPresent()){
+            Daily daily=getPost.get();
+            daily.updated(
+                    dailyPostRequest.categoryId(),
+                    dailyPostRequest.title(),
+                    dailyPostRequest.content()
+            );
+            dailyRepository.save(daily);
+        } else {
+            throw new RuntimeException("등록되지 않은 게시물입니다.");
+        }
     }
 
     @Override
     public void deleteDailyPost(Long id){
-        deleteDailyPost.deletePost(id);
+        if(dailyRepository.existsById(id)){
+            dailyRepository.deleteById(id);
+        }else{
+            throw new RuntimeException("삭제할 게시글이 존재하지 않습니다.");
+        }
     }
 
     @Override

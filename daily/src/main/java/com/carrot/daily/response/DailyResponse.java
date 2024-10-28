@@ -1,7 +1,6 @@
 package com.carrot.daily.response;
 
 import com.carrot.daily.domain.Daily;
-import lombok.Getter;
 
 import java.util.Date;
 import java.util.List;

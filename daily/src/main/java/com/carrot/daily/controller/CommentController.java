@@ -15,21 +15,21 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/{dailyId}/comments")
-    public ResponseEntity<String> writeComment(@RequestBody CommentRequest commentRequest) {
-        commentService.addComment(commentRequest);
+    @PostMapping("/{daylifeId}/comments")
+    public ResponseEntity<String> writeComment(@RequestBody CommentRequest commentRequest, @PathVariable Long daylifeId) {
+        commentService.addComment(commentRequest, daylifeId);
         return ResponseEntity.ok("댓글이 등록되었습니다.");
     }
 
-    @GetMapping("/{dailyId}/comments")
-    public ResponseEntity<List<CommentResponse>> getAllCommentsByDailyId(){
-        List<CommentResponse> commentsList = commentService.getAllComments();
+    @GetMapping("/{daylifeId}/comments")
+    public ResponseEntity<List<CommentResponse>> getAllCommentsByDailyId(@PathVariable Long daylifeId){
+        List<CommentResponse> commentsList = commentService.getAllComments(daylifeId);
         return ResponseEntity.ok(commentsList);
     }
 
-    @DeleteMapping("/{dailyId}/comments/{commentsId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id){
-        commentService.deleteComment(id);
+    @DeleteMapping("/{daylifeId}/comments/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long daylifeId, @PathVariable Long commentId){
+        commentService.deleteComment(daylifeId, commentId);
         return ResponseEntity.ok("댓글이 삭제되었습니다.");
     }
 }

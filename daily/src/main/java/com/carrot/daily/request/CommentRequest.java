@@ -5,16 +5,14 @@ import com.carrot.daily.domain.Daily;
 
 public record CommentRequest(
         Long userId,
-        Long daylifeId,
         String content
 
 ) {
-    public Comment toEntity() {
+    public Comment toEntity(Daily daily) {
         return Comment.builder()
+                .daily(daily)
                 .userId(userId)
-                .daylifeId(daylifeId)
                 .content(content)
                 .build();
     }
-
 }

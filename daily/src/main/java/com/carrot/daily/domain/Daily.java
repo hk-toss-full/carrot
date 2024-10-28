@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,6 +18,7 @@ import java.util.Date;
 public class Daily {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="daylife_id")
     private Long id;
     @Column(name="user_id")
     private Long userId;
@@ -31,6 +33,10 @@ public class Daily {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
+    @OneToMany
+    @JoinColumn(name="comment_id")
+    private List<Comment> comments;
+
 
     public void updated( Long categoryId, String title, String content){
         this.categoryId=categoryId;

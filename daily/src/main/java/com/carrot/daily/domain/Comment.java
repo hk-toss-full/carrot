@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -16,13 +17,16 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="comment_id")
     private Long id;
     @Column(name="user_id")
     private Long userId;
-    @Column(name="daylife_id")
-    private Long daylifeId;
-    @Column(name="comment_title")
+    @ManyToOne
+    @JoinColumn
+    private Daily daily;
+    @Column(name="comment_content")
     private String content;
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 }
