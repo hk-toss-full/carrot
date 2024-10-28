@@ -15,5 +15,6 @@ public interface DailyService {
     Optional<Daily> getPostById(Long id);
     void updateDailyPost(Long id, DailyPostRequest dailyPostRequest);
     void deleteDailyPost(Long id);
-    List<DailyResponse> getPostsByCategoryId(Long categoryId);
+    List<DailyResponse> getPostsByCategoryName(String categoryName);
+
 }

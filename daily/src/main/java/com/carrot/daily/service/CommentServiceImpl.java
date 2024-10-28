@@ -39,9 +39,7 @@ public class CommentServiceImpl implements CommentService{
         if(!comment.getDaily().getId().equals(daylifeId)){
             throw new RuntimeException("해당 게시글에 댓글이 존재하지 않습니다.");
         }
-
         commentRepository.delete(comment);
     }
-
 
 }

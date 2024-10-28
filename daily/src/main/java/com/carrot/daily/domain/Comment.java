@@ -15,17 +15,22 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="comment_id")
+    @Column(name = "comment_id")
     private Long id;
-    @Column(name="user_id")
+
+    @Column(name = "user_id")
     private Long userId;
+
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "daylife_id")
     private Daily daily;
-    @Column(name="comment_content")
+
+    @Column(name = "comment_content")
     private String content;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;

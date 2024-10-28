@@ -9,16 +9,16 @@ import java.util.stream.Collectors;
 
 public record DailyResponse(
         Long userId,
-        Long categoryId,
+        String categoryName,
         Long locationId,
         String title,
         String content,
         Date createdAt
 ) {
-        public static DailyResponse from(Daily daily){
+        public static DailyResponse from(Daily daily) {
             return new DailyResponse(
                     daily.getUserId(),
-                    daily.getCategoryId(),
+                    daily.getDCategory() != null ? daily.getDCategory().getName() : null,
                     daily.getLocationId(),
                     daily.getTitle(),
                     daily.getContent(),
@@ -32,10 +32,10 @@ public record DailyResponse(
                     .collect(Collectors.toList());
         }
 
-        public static List<DailyResponse> fromCategory(List<Daily> dailies, Long categoryId) {
-            return dailies.stream()
-                    .filter(daily -> daily.getCategoryId().equals(categoryId))
-                    .map(DailyResponse::from)
-                    .collect(Collectors.toList());
-        }
+//        public static List<DailyResponse> fromCategory(List<Daily> dailies, String categoryName) {
+//            return dailies.stream()
+//                    .filter(daily -> daily.getDCategory().getName().equals(categoryName))
+//                    .map(DailyResponse::from)
+//                    .collect(Collectors.toList());
+//        }
 }

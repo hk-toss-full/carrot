@@ -16,31 +16,38 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Daily {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="daylife_id")
     private Long id;
+
     @Column(name="user_id")
     private Long userId;
+
     @Column(name="location_id")
     private Long locationId;
-    @Column(name="DCategory_id")
-    private Long categoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dcategory_id")
+    private DCategory dCategory;
+
     @Column(name="daily_title")
     private String title;
+
     @Column(name="daily_content")
     private String content;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
-    @OneToMany
-    @JoinColumn(name="comment_id")
+
+    @OneToMany(mappedBy = "daily")
     private List<Comment> comments;
 
-
-    public void updated( Long categoryId, String title, String content){
-        this.categoryId=categoryId;
-        this.title=title;
-        this.content=content;
+    public void updated(DCategory dCategory, String title, String content){
+        this.dCategory = dCategory;
+        this.title = title;
+        this.content = content;
     }
 }
