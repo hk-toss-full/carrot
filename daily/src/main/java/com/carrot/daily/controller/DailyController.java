@@ -61,4 +61,5 @@ public class DailyController {
         List<DailyResponse> dailyResponses = DailyResponse.fromList(dailies);
         return ResponseEntity.ok(dailyResponses);
     }
+
 }
