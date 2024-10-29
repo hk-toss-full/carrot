@@ -30,4 +30,5 @@ public class UserController {
         UserResponse updateUserInfo = userService.updateUserNickname(userId, request);
         return ResponseEntity.ok(ApplicationResponse.success(updateUserInfo));
     }
+
 }

@@ -11,4 +11,5 @@ public interface UserService {
     UserResponse getUserInfo(Long userId);
     UserResponse updateUserNickname(Long userId, UserRequest request);
     void logout(HttpServletRequest request);
+    Long verifyAccessToken(String accessToken);
 }

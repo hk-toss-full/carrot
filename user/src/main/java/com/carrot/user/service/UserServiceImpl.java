@@ -7,12 +7,14 @@ import com.carrot.user.exception.UserErrorCode;
 import com.carrot.user.global.exception.ApplicationException;
 import com.carrot.user.jwt.JwtAuthenticationProvider;
 import com.carrot.user.repository.UserJpaRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.UUID;
@@ -66,6 +68,16 @@ public class UserServiceImpl implements UserService, CustomUserDetailsService {
         }
         kakaoApiClient.logout(accessToken);
     }
+
+    @Override
+    public Long verifyAccessToken(String accessToken) {
+        if (!jwtAuthenticationProvider.validateToken(accessToken)) {
+            throw new ApplicationException(UserErrorCode.INVALID_TOKEN);
+        }
+        Claims claims = jwtAuthenticationProvider.getClaims(accessToken);
+        return claims.get("userId", Long.class);
+    }
+
 
     private Long findOrCreateMember(KakaoInfoResponse kakaoInfoResponse) {
         return userJpaRepository.findByKakaoId(kakaoInfoResponse.id())

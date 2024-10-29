@@ -108,4 +108,12 @@ public class JwtAuthenticationProvider {
         }
         return null;
     }
+
+    public Long getUserIdFromToken(String accessToken) {
+        if (!validateToken(accessToken)) {
+            throw new ApplicationException(UserErrorCode.INVALID_TOKEN);
+        }
+        Claims claims = getClaims(accessToken);
+        return claims.get("userId", Long.class);
+    }
 }

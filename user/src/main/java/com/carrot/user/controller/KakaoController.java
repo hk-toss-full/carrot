@@ -28,4 +28,11 @@ public class KakaoController {
         userService.logout(request);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/verify-token")
+    public ResponseEntity<ApplicationResponse<Long>> verifyToken(@RequestHeader("Authorization") String token) {
+        String accessToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        Long userId = userService.verifyAccessToken(accessToken);
+        return ResponseEntity.ok(ApplicationResponse.success(userId));
+    }
 }
