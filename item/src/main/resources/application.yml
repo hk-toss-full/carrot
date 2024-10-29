@@ -1,0 +1,41 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: item
+  datasource:
+    url: jdbc:mysql://localhost:3306/carrotTestDB?serverTimezone=Asia/Seoul
+    username: test
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema: classpath:schema.sql
+      data: classpath:data.sql
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#  data:
+#    mongodb:
+#      uri: mongodb://localhost:27017/carrotTestDB
+#      database: carrotTestDB
+  kafka:
+    consumer:
+      group-id: item
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9092
+#eureka:
+#  client:
+#    service-url:
+#      defaultUrl: http://localhost:8761/eureka
+#  instance:
+#    prefer-ip-address: true # ???
+
