@@ -1,9 +1,6 @@
 package com.carrot.chat.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.socket.WebSocketSession;
@@ -16,6 +13,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ChatRoom {
 
     @Id
@@ -23,11 +21,4 @@ public class ChatRoom {
     private String name;
     private Date createdAt;
     private Long itemId;
-
-    @Setter
-    private Set<WebSocketSession> sessions = new HashSet<>();
-
-    public Set<WebSocketSession> getSessions() {
-        return sessions;
-    }
 }
