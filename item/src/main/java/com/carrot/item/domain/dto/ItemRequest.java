@@ -4,14 +4,16 @@ import com.carrot.item.domain.entity.Item;
 import com.carrot.item.domain.entity.ItemStatus;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record ItemRequest(
-        Long userId,
         String itemTitle,
         String itemContent,
-        ItemStatus status
+        ItemStatus status,
+        List<SCategoryRequest> categories
 ) {
-    public Item toEntity() {
+    public Item toEntity(Long userId) {
         return Item.builder()
                 .userId(userId)
                 .itemTitle(itemTitle)
@@ -19,6 +21,9 @@ public record ItemRequest(
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .status(ItemStatus.AVAILABLE)
+                .categories(categories.stream()
+                        .map(SCategoryRequest::toEntity)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
