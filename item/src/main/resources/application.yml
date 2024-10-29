@@ -9,11 +9,16 @@ spring:
     username: test
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema: classpath:schema.sql
+      data: classpath:data.sql
   jpa:
     database: mysql
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 #  data:

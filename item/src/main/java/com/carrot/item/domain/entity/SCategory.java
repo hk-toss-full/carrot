@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,11 +18,12 @@ public class SCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long scategoryId;
+    @Column(name = "scategory_id")
+    private Long sCategoryId;
 
     @Column(nullable = false)
     private String category;
 
     @ManyToMany(mappedBy = "categories")
-    private List<Item> items = new ArrayList<>();
+    private List<Item> items;
 }

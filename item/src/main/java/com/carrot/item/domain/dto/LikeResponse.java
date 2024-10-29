@@ -1,6 +1,5 @@
 package com.carrot.item.domain.dto;
 
-import com.carrot.item.domain.entity.Item;
 import com.carrot.item.domain.entity.Like;
 
 public record LikeResponse(Long userId, Long itemId) {
