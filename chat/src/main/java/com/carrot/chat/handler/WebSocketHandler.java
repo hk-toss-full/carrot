@@ -1,98 +1,85 @@
 package com.carrot.chat.handler;
 
 import com.carrot.chat.domain.dto.ChatMessageRequest;
+import com.carrot.chat.domain.dto.ChatRoomRequest;
+import com.carrot.chat.domain.dto.ItemResponse;
 import com.carrot.chat.domain.dto.UserResponse;
 import com.carrot.chat.domain.entity.ChatMessage;
-import com.carrot.chat.domain.entity.ChatRoom;
 import com.carrot.chat.domain.entity.MessageType;
+import com.carrot.chat.kafka.ItemServiceClient;
 import com.carrot.chat.kafka.UserServiceClient;
-import com.carrot.chat.service.ChatService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
-public class WebSocketHandler extends TextWebSocketHandler {
+@Controller
+public class WebSocketHandler {
 
-    private final ObjectMapper objectMapper;
-    private final ChatService chatService;
     private final UserServiceClient userServiceClient;
+    private final ItemServiceClient itemServiceClient;
+    private final MongoTemplate mongoTemplate;
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    private final Map<String, Set<WebSocketSession>> chatRoomSessions = new ConcurrentHashMap<>();
 
-    }
-
-    @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String payload = message.getPayload();
-        ChatMessageRequest chatMessageRequest = objectMapper.readValue(payload, ChatMessageRequest.class);
-
-        ChatRoom room = chatService.findRoomById(chatMessageRequest.chatRoomId());
-        Set<WebSocketSession> sessions = room.getSessions();
-
+    @MessageMapping("/{roomId}")
+    @SendTo("/pub/{roomId}")
+    public ChatMessage handleTextMessage(@PathVariable String roomId,
+                                         ChatMessageRequest chatMessageRequest,
+                                         ChatRoomRequest chatRoomRequest,
+                                         WebSocketSession session) throws Exception {
         UserResponse userResponse = userServiceClient.getUserById(chatMessageRequest.userId());
-        String userName = userResponse != null ? userResponse.userId().toString() : "Unknown User";
+        String userNickname = userResponse != null ? userResponse.nickname() : "Unknown User";
+
+        ItemResponse itemResponse = itemServiceClient.getItemById(chatRoomRequest.itemId());
+        String itemTitle = itemResponse != null ? itemResponse.itemTitle() : null;
+
+        Set<WebSocketSession> sessions = chatRoomSessions
+                .computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet());
 
         ChatMessage chatMessage;
 
         if (chatMessageRequest.type().equals(MessageType.ENTER)) {
             sessions.add(session);
             chatMessage = ChatMessage.builder()
-                    .chatMessageId(null)
-                    .chatRoomId(chatMessageRequest.chatRoomId())
-                    .message(userName + "님이 입장했습니다.")
+                    .chatRoomId(roomId)
+                    .message(itemTitle + ":" + userNickname + "님이 입장했습니다.")
                     .readOrNot(false)
                     .createdAt(new Date())
                     .userId(chatMessageRequest.userId())
                     .type(MessageType.TEXT)
                     .build();
 
-            sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
-            log.info("User entered: {}", userName);
+            mongoTemplate.save(chatMessage, "chatMessages");
+            log.info("User entered: {}", userNickname);
         } else if (chatMessageRequest.type().equals(MessageType.QUIT)) {
             sessions.remove(session);
             chatMessage = ChatMessage.builder()
-                    .chatMessageId(null)
                     .chatRoomId(chatMessageRequest.chatRoomId())
-                    .message(userName + "님이 퇴장했습니다.")
+                    .message(userNickname + "님이 퇴장했습니다.")
                     .readOrNot(false)
                     .createdAt(new Date())
                     .userId(chatMessageRequest.userId())
                     .type(MessageType.TEXT)
                     .build();
 
-            sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
-            log.info("User left: {}", userName);
+            mongoTemplate.save(chatMessage, "chatMessages");
+            log.info("User left: {}", userNickname);
         } else {
             chatMessage = chatMessageRequest.toEntity();
-            sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
+            mongoTemplate.save(chatMessage, "chatMessages");
         }
-    }
-
-    private void sendToEachSocket(Set<WebSocketSession> sessions, TextMessage message) {
-        sessions.parallelStream().forEach(roomSession -> {
-            try {
-                roomSession.sendMessage(message);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        return chatMessage;
     }
 }

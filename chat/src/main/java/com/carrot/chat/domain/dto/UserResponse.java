@@ -1,4 +1,4 @@
 package com.carrot.chat.domain.dto;
 
-public record UserResponse(Long userId) {
+public record UserResponse(Long userId, String nickname) {
 }
